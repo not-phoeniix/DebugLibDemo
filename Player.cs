@@ -32,6 +32,13 @@ public class Player {
     }
 
     /// <summary>
+    /// Get-only property of center position of player relative to hitbox
+    /// </summary>
+    public Vector2 CenterPosition {
+        get { return Hitbox.Center.ToVector2(); }
+    }
+
+    /// <summary>
     /// Get-only property of player's direction vector
     /// </summary>
     public Vector2 Direction {

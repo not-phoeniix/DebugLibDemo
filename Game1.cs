@@ -11,6 +11,7 @@ public class Game1 : Game {
     private KeyboardState kbPrev;
 
     private Player player;
+    private SpriteFont arial25;
     private bool enableDebugDrawing = true;
 
     public Game1() {
@@ -26,14 +27,17 @@ public class Game1 : Game {
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // create player object
+        // load texture and initialize player
         Texture2D playerSprite = Content.Load<Texture2D>("player");
-        Vector2 playerPosition = new(50, 50);
+        Vector2 playerPosition = new(200, 200);
         player = new Player(
             playerPosition,     // player initial position
             4f,                 // player speed
             playerSprite        // player's sprite
         );
+
+        // load font
+        arial25 = Content.Load<SpriteFont>("arial25");
     }
 
     protected override void Update(GameTime gameTime) {
@@ -65,9 +69,17 @@ public class Game1 : Game {
         // ~~~ draw player ~~~
         player.Draw(_spriteBatch);
 
+        // ~~~ draw instruction text ~~
+        _spriteBatch.DrawString(
+            arial25,
+            "Press space to toggle debug info\nand arrow keys to move",
+            new Vector2(20, 20),
+            Color.Black
+        );
+
         // ~~~ draw debug information ~~~
         if (enableDebugDrawing) {
-            // draw player's hitbot
+            // draw player's hitbox
             DebugLib.DrawRectOutline(
                 _spriteBatch,
                 player.Hitbox,
@@ -76,11 +88,10 @@ public class Game1 : Game {
             );
 
             // draw player's direction
-            Vector2 playerCenterPos = player.Hitbox.Center.ToVector2();
-            Vector2 directionPos = playerCenterPos + (player.Direction * 100f);
+            Vector2 directionPos = player.CenterPosition + (player.Direction * 100f);
             DebugLib.DrawLine(
                 _spriteBatch,
-                playerCenterPos,
+                player.CenterPosition,
                 directionPos,
                 5f,
                 Color.Green
