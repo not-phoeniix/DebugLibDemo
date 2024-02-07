@@ -6,7 +6,7 @@ namespace DebugLibDemo;
 
 /// <summary>
 /// Non-instantiable static class for drawing
-/// basic debug information with monogame.
+/// basic debug information/primitives in monogame.
 ///
 /// Written by Nikki Murello :]
 /// </summary>

@@ -7,6 +7,7 @@ namespace DebugLibDemo;
 public class Game1 : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+
     private KeyboardState kb;
     private KeyboardState kbPrev;
 
@@ -27,7 +28,7 @@ public class Game1 : Game {
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // load texture and initialize player
+        // load texture and initialize player object
         Texture2D playerSprite = Content.Load<Texture2D>("player");
         Vector2 playerPosition = new(200, 200);
         player = new Player(
@@ -50,7 +51,7 @@ public class Game1 : Game {
             Exit();
         }
 
-        // toggle debug drawing with space key
+        // toggle debug drawing boolean by pressing space key
         if (kb.IsKeyDown(Keys.Space) && kbPrev.IsKeyUp(Keys.Space)) {
             enableDebugDrawing = !enableDebugDrawing;
         }
@@ -78,28 +79,68 @@ public class Game1 : Game {
         );
 
         // ~~~ draw debug information ~~~
-        if (enableDebugDrawing) {
-            // draw player's hitbox
-            DebugLib.DrawRectOutline(
-                _spriteBatch,
-                player.Hitbox,
-                5f,
-                Color.Red
-            );
 
-            // draw player's direction
-            Vector2 directionPos = player.CenterPosition + (player.Direction * 100f);
-            DebugLib.DrawLine(
-                _spriteBatch,
-                player.CenterPosition,
-                directionPos,
-                5f,
-                Color.Green
-            );
+        // Drawing debugging information based on a boolean variable
+        //   makes it easy to toggle on and off, and very useful when
+        //   testing and debugging issues in larger-scale games.
+        if (enableDebugDrawing) {
+            // I put debug drawing in a separate method to make it
+            //   easier to edit later, and to show that you can make
+            //   your own classes with "debug drawing" methods.
+            //   That way, you can call them in this conditional to
+            //   make everything easily toggleable :]
+            //
+            // For example:
+            //   player.DrawDebugInfo(_spriteBatch);
+            //   enemy.DrawDebugInfo(_spriteBatch);
+            //   map.DrawDebugInfo(_spriteBatch);
+            //   etc.
+            //
+            // ^^^^ So all of these become toggleable with one easy boolean!
+
+            DrawDebugInfo(_spriteBatch);
         }
 
         _spriteBatch.End();
 
         base.Draw(gameTime);
+    }
+
+    /// <summary>
+    /// Draws all debug information (player hitbox and direction) to screen
+    /// </summary>
+    /// <param name="sb">SpriteBatch to draw with</param>
+    private void DrawDebugInfo(SpriteBatch sb) {
+        // Drawing a combination of shapes and text is SUPER
+        //   SUPER useful when showing information to the screen
+        //   so you don't have to dig around the locals window
+        //   with breakpoints to find in visual studio if something
+        //   is not working the way it's supposed to
+
+        // draw player's location in the world:
+        sb.DrawString(
+            arial25,
+            $"player position: ({player.Position.X}, {player.Position.Y})",
+            new Vector2(30, 30),
+            Color.Black
+        );
+
+        // draw player's hitbox:
+        DebugLib.DrawRectOutline(
+            sb,
+            player.Hitbox,
+            5f,
+            Color.Red
+        );
+
+        // draw player's direction:
+        Vector2 directionPos = player.CenterPosition + (player.Direction * 100f);
+        DebugLib.DrawLine(
+            sb,
+            player.CenterPosition,
+            directionPos,
+            5f,
+            Color.LimeGreen
+        );
     }
 }

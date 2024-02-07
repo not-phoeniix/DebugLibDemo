@@ -4,6 +4,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DebugLibDemo;
 
+/// <summary>
+/// Player class, handles input and moves with arrow keys
+/// </summary>
 public class Player {
     private Vector2 position;
     private Texture2D texture;
@@ -61,8 +64,11 @@ public class Player {
     /// Updates player position/input (arrow keys)
     /// </summary>
     /// <param name="kb">Current frame's keyboard state</param>
-    public void Update(KeyboardState kb)  {
+    public void Update(KeyboardState kb) {
+        // reset direction each frame
         direction = Vector2.Zero;
+
+        // update direction and position with keyboard input:
 
         if (kb.IsKeyDown(Keys.Left)) {
             position.X -= speed;
@@ -84,6 +90,8 @@ public class Player {
             direction.Y = 1;
         }
 
+        // make direction's length 1 (normalize) if
+        //   it's not a zero vector to avoid NaN values
         if (direction != Vector2.Zero) {
             direction.Normalize();
         }
