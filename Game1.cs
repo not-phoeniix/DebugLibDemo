@@ -74,7 +74,7 @@ public class Game1 : Game {
         _spriteBatch.DrawString(
             arial25,
             "Press space to toggle debug info\nand arrow keys to move",
-            new Vector2(20, 20),
+            new Vector2(30, 30),
             Color.Black
         );
 
@@ -117,11 +117,12 @@ public class Game1 : Game {
         //   with breakpoints to find in visual studio if something
         //   is not working the way it's supposed to
 
-        // draw player's location in the world:
+        // draw player's location next to player:
+        Vector2 coordPos = player.Position + new Vector2(100, 100);
         sb.DrawString(
             arial25,
-            $"player position: ({player.Position.X}, {player.Position.Y})",
-            new Vector2(30, 30),
+            $"({player.Position.X}, {player.Position.Y})",
+            coordPos,
             Color.Black
         );
 
