@@ -51,7 +51,7 @@ public class Game1 : Game {
             Exit();
         }
 
-        // toggle debug drawing boolean by pressing space key
+        // toggle debug drawing boolean by pressing space key once
         if (kb.IsKeyDown(Keys.Space) && kbPrev.IsKeyUp(Keys.Space)) {
             enableDebugDrawing = !enableDebugDrawing;
         }
@@ -142,6 +142,15 @@ public class Game1 : Game {
             directionPos,
             5f,
             Color.LimeGreen
+        );
+
+        // draw a debug mode label on bottom right of screen:
+        DebugLib.DrawRectFill(sb, new Rectangle(510, 410, 300, 100), Color.DarkMagenta);
+        sb.DrawString(
+            arial25,
+            "DEBUG MODE !!",
+            new Vector2(530, 427),
+            Color.White
         );
     }
 }

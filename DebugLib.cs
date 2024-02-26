@@ -20,6 +20,36 @@ public static class DebugLib {
     #region // Line drawing
 
     /// <summary>
+    /// Draws a singular line between 2 points, centered so
+    /// rotation doesn't surround top-left pixel position
+    /// </summary>
+    /// <param name="sb">SpriteBatch to draw with</param>
+    /// <param name="point1">Vector2 point to start line drawing</param>
+    /// <param name="point2">Vector2 point to end line drawing</param>
+    /// <param name="thickness">Line thickness (px)</param>
+    /// <param name="color">Color of line to draw</param>
+    public static void DrawLineCentered(
+        this SpriteBatch sb,
+        Vector2 point1,
+        Vector2 point2,
+        float thickness,
+        Color color
+    ) {
+        // make angle that faces perpendicular to line between two points
+        float angle = MathF.Atan2(point2.Y - point1.Y, point2.X - point1.X);
+        angle -= MathF.PI / 2;
+
+        // offset is halfway across thickness in perpendicular direction
+        Vector2 offset = new(
+            MathF.Cos(angle) * thickness / 2,
+            MathF.Sin(angle) * thickness / 2
+        );
+
+        // draw with point offset applied
+        DrawLine(sb, point1 + offset, point2 + offset, thickness, color);
+    }
+
+    /// <summary>
     /// Draws a line to the screen
     /// </summary>
     /// <param name="sb">SpriteBatch to draw with</param>
@@ -212,7 +242,7 @@ public static class DebugLib {
     #region // Circle drawing
 
     /// <summary>
-    /// Draws a circle to the screen
+    /// Draws a circle outline to the screen
     /// </summary>
     /// <param name="sb">SpriteBatch to draw with</param>
     /// <param name="centerPoint">Center of circle</param>
@@ -258,7 +288,7 @@ public static class DebugLib {
     }
 
     /// <summary>
-    /// Draws a circle to the screen
+    /// Draws a circle outline to the screen
     /// </summary>
     /// <param name="sb">SpriteBatch to draw with</param>
     /// <param name="centerX">X coordinate of circle center</param>
@@ -287,6 +317,111 @@ public static class DebugLib {
             thickness,
             color
         );
+    }
+
+    /// <summary>
+    /// Draws a filled circle to the screen
+    /// </summary>
+    /// <param name="sb">SpriteBatch to draw with</param>
+    /// <param name="centerPoint">Center of circle</param>
+    /// <param name="radius">Radius of circle</param>
+    /// <param name="divisions">
+    /// Number of subdivisions of circle, higher value means
+    /// higher number of sides (and more circle-y circle)
+    /// </param>
+    /// <param name="color">Color of circle</param>
+    public static void DrawCircleFill(
+        SpriteBatch sb,
+        Vector2 centerPoint,
+        float radius,
+        int divisions,
+        Color color
+    ) {
+        // set up variables
+        float angleStep = 2 * MathF.PI / divisions;
+        float angle = 0;
+        Vector2 edgePos = new Vector2(
+            MathF.Cos(angle) * radius,
+            MathF.Sin(angle) * radius
+        ) + centerPoint;
+
+        // thickness equals the distance between two edge points
+        float thickness = Vector2.Distance(
+            edgePos,
+            new Vector2(
+                MathF.Cos(angle + angleStep) * radius,
+                MathF.Sin(angle + angleStep) * radius
+            ) + centerPoint
+        );
+
+        // iterate for number of divisions, rotate around
+        //   360 degrees and draw line between center point
+        //   an edge point in the circle
+        for (int i = 0; i < divisions; i++) {
+            DrawLineCentered(sb, centerPoint, edgePos, thickness, color);
+
+            angle += angleStep;
+
+            edgePos = new Vector2(
+                MathF.Cos(angle) * radius,
+                MathF.Sin(angle) * radius
+            ) + centerPoint;
+        }
+    }
+
+    /// <summary>
+    /// Draws a filled circle to the screen
+    /// </summary>
+    /// <param name="sb">SpriteBatch to draw with</param>
+    /// <param name="centerX">X coordinate of circle center</param>
+    /// <param name="centerY">Y coordinate of circle center</param>
+    /// <param name="radius">Radius of circle</param>
+    /// <param name="divisions">
+    /// Number of subdivisions of circle, higher value means
+    /// higher number of sides (and more circle-y circle)
+    /// </param>
+    /// <param name="color">Color of circle</param>
+    public static void DrawCircleFill(
+        SpriteBatch sb,
+        int centerX,
+        int centerY,
+        float radius,
+        int divisions,
+        Color color
+    ) {
+        DrawCircleFill(
+            sb,
+            new Vector2(centerX, centerY),
+            radius,
+            divisions,
+            color
+        );
+    }
+
+    #endregion
+
+    #region // Triangle drawing
+
+    /// <summary>
+    /// Draws a triangle to the screen
+    /// </summary>
+    /// <param name="sb">SpriteBatch to draw with</param>
+    /// <param name="point1">First triangle vertex</param>
+    /// <param name="point2">Second triangle vertex</param>
+    /// <param name="point3">Third triangle vertex</param>
+    /// <param name="thickness">Thickness of circle outline line</param>
+    /// <param name="color">Color of triangle</param>
+    public static void DrawTriangleOutline(
+        SpriteBatch sb,
+        Vector2 point1,
+        Vector2 point2,
+        Vector2 point3,
+        float thickness,
+        Color color
+    ) {
+        DrawLineCentered(sb, point1, point2, thickness, color);
+        DrawLineCentered(sb, point2, point3, thickness, color);
+        DrawLineCentered(sb, point3, point1, thickness, color);
     }
 
     #endregion
